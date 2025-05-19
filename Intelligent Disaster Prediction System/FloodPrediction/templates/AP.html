@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Coordinate Map Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        #map {
+            height: 400px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        form input {
+            width: 250px;
+            padding: 8px;
+            margin: 5px 0;
+        }
+
+        form button {
+            padding: 8px 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Map Viewer</h2>
+
+    <form id="coordForm">
+        <label>Latitude:</label><br>
+        <input type="text" id="latitude" placeholder="e.g., 38.297" required><br>
+
+        <label>Longitude:</label><br>
+        <input type="text" id="longitude" placeholder="e.g., -122.435" required><br>
+
+        <button type="submit">Show on Map</button>
+    </form>
+
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        const form = document.getElementById('coordForm');
+        const mapDiv = document.getElementById('map');
+        let map;
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const lat = parseFloat(document.getElementById('latitude').value);
+            const lng = parseFloat(document.getElementById('longitude').value);
+
+            if (isNaN(lat) || isNaN(lng)) {
+                alert("Please enter valid numeric coordinates.");
+                return;
+            }
+
+            mapDiv.style.display = "block";
+
+            if (!map) {
+                map = L.map('map').setView([lat, lng], 5);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+                }).addTo(map);
+            } else {
+                map.setView([lat, lng], 5);
+            }
+
+            L.marker([lat, lng])
+                .addTo(map)
+                .bindPopup(`Latitude: ${lat}<br>Longitude: ${lng}`)
+                .openPopup();
+        });
+    </script>
+</body>
+
+</html>
